@@ -1,0 +1,173 @@
+{
+  "name": "GesFlota · Agente Base M1",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fe8d5baf-21ff-482a-bc85-4c397df2c652",
+      "name": "When chat message received",
+      "webhookId": "df4ac956-8b13-47a7-9d9a-84425f10fc11"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "## ROL\nEres el Asistente Operativo de Gestión de Flota de GesFlota, un sistema SaaS de administración de flotas vehiculares. Tu función es actuar como analista de mantenimiento vehicular, asistiendo al equipo operativo en el registro, consulta y gestión de datos de la flota de forma eficiente y estructurada.\n\n## ÁMBITO\nTu dominio de acción se limita exclusivamente a la gestión operativa de flotas vehiculares:\n- Registro y consulta de unidades (patente, marca, modelo, año, kilometraje, estado operativo).\n- Órdenes de trabajo de mantenimiento preventivo y correctivo.\n- Control de vencimientos: VTV, seguro, licencias de conducir.\n- Registro de costos operativos: combustible, repuestos, mano de obra.\n- Asignación de vehículos a conductores.\n\n## OBJETIVO\nAsistir al usuario en la carga, consulta y análisis de datos de flota utilizando Google Sheets como base de datos operativa. Interpretá cada solicitud, ejecutá la acción correspondiente en la herramienta y confirmá el resultado de forma clara.\n\n## REGLAS\n1. SIEMPRE respondé en español profesional.\n2. NUNCA inventes datos de vehículos, costos, fechas ni kilometrajes. Si no tenés la información, preguntá al usuario.\n3. NUNCA elimines registros sin confirmación explícita del usuario.\n4. NUNCA accedas a información fuera del ámbito de gestión de flota.\n5. Antes de registrar un dato nuevo, confirmá los campos obligatorios con el usuario: patente, tipo de registro y fecha.\n6. Si el usuario solicita algo fuera de tu alcance, indicá que eso requiere intervención humana especializada.\n7. Limitá tus respuestas a información verificable en la planilla o proporcionada directamente por el usuario en la conversación actual.\n\n## ESCALAMIENTO\nDerivá al operador humano ante estas situaciones:\n- Solicitud de eliminación masiva de registros.\n- Reporte de siniestro o accidente vehicular.\n- Consultas sobre pólizas de seguro o cuestiones legales.\n- Acciones que impliquen compromisos financieros superiores al mantenimiento de rutina.\n- Cualquier solicitud que requiera acceso a sistemas externos no autorizados.",
+          "maxIterations": 7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f28d90dd-e0c4-41c3-b663-0c5d84592fc4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Herramienta de acceso a la base de datos operativa de flota vehicular en Google Sheets. Utilizá esta herramienta ÚNICAMENTE cuando el usuario solicite alguna de las siguientes acciones relacionadas con la gestión de flota de GesFlota:\n\nCASOS DE ACTIVACIÓN OBLIGATORIA:\n1. CONSULTAR información de una unidad vehicular específica (por patente, marca o estado operativo).\n2. REGISTRAR una nueva unidad vehicular: patente, marca, modelo, año, kilometraje actual, estado (Activo / En taller / Baja).\n3. REGISTRAR una orden de trabajo de mantenimiento: tipo",
+        "documentId": {
+          "__rl": true,
+          "value": "1quQNkoGS5yZQU4ar-8O0GJi8GbElhArBMutchtZM_lI",
+          "mode": "list",
+          "cachedResultName": "GesFlota - Base Operativa",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1quQNkoGS5yZQU4ar-8O0GJi8GbElhArBMutchtZM_lI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Unidades",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1quQNkoGS5yZQU4ar-8O0GJi8GbElhArBMutchtZM_lI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        208
+      ],
+      "id": "d73f3ae3-4f38-42ec-b7ff-c9dee6d49feb",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "AM0Vt6aYnkH9pQoa",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "germanmercadook@gmail.com",
+        "subject": "=⚙️ [GesFlota] Log de Ejecución · {{ $now.toFormat('yyyy-MM-dd HH:mm') }}",
+        "message": "=════════════════════════════════════════   LOG DE EJECUCIÓN · AGENTE GESFLOTA M1 ════════════════════════════════════════  Fecha y hora: {{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }} Workflow: GesFlota · Agente Base M1 Estado: Ejecución completada  ────────────────────────────────────────   RESPUESTA DEL AGENTE ────────────────────────────────────────  {{ $json.output }}  ════════════════════════════════════════ Este log fue generado automáticamente por el sistema de observabilidad de GesFlota. Cualquier anomalía debe reportarse al equipo de operaciones. ════════════════════════════════════════",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        17
+      ],
+      "id": "7d202b70-18a0-4792-b718-022dca5452e0",
+      "name": "Send a message",
+      "webhookId": "254377df-09e1-458d-8374-59696fa6e547",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "4RJSkpFK921X7acI",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "=models/gemini-3.8-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "d2790629-eb01-4e47-a4a1-1cde485c1e72",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "k4fAN2TX612oo1VU",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e06c419c-31b4-4b07-adab-7aac41936f88",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "74c8e2b843577f238730d64519434ed1394e07b74d15913375caf84f5b1190f1"
+  },
+  "nodeGroups": [],
+  "id": "ASyRVgQphf7E9hIM",
+  "tags": []
+}
